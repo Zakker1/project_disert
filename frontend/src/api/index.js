@@ -1,8 +1,26 @@
-import axios from 'axios';
+// Отправка изображения на backend
+export async function uploadImage(formData) {
+  const response = await fetch("http://localhost:3000/api/tasks/upload", {
+    method: "POST",
+    body: formData,
+  });
 
-const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE,
-});
+  if (!response.ok) {
+    throw new Error("Ошибка при отправке изображения");
+  }
 
-export const uploadImage = (formData) => API.post('/upload', formData);
-export const getTaskStatus = (taskId) => API.get(`/status/${taskId}`);
+  return await response.json(); // ожидается: { taskId: '...' }
+}
+
+// Получение статуса задачи
+export async function getTaskStatus(taskId) {
+  const response = await fetch(
+    `http://localhost:3000/api/tasks/status/${taskId}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Ошибка при получении статуса задачи");
+  }
+
+  return await response.json(); // ожидается: { status: 'pending' | 'done' | 'error', ... }
+}

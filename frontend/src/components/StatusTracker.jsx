@@ -1,27 +1,40 @@
-import { useEffect, useState } from 'react';
-import { getTaskStatus } from '../api';
+import { useEffect, useState } from "react";
+import { getTaskStatus } from "../api";
 
 export default function StatusTracker({ taskId, onResult }) {
-  const [status, setStatus] = useState('ожидание');
+  const [status, setStatus] = useState("ожидание");
 
   useEffect(() => {
+    if (!taskId) return;
+
     const interval = setInterval(async () => {
       try {
-        const { data } = await getTaskStatus(taskId);
+        const data = await getTaskStatus(taskId);
+
         setStatus(data.status);
-        if (data.status === 'done') {
+
+        if (data.status === "done") {
           onResult(data.result);
           clearInterval(interval);
         }
-        if (data.status === 'error') {
+
+        if (data.status === "error") {
+          setStatus("ошибка обработки");
           clearInterval(interval);
         }
-      } catch {
+      } catch (err) {
+        console.error("Ошибка при получении статуса:", err);
+        setStatus("ошибка соединения");
         clearInterval(interval);
-        setStatus('Ошибка соединения');
       }
     }, 2000);
+
     return () => clearInterval(interval);
-  }, [taskId]);
-  return <p>Текущий статус: <strong>{status}</strong></p>;
+  }, [taskId, onResult]);
+
+  return (
+    <p>
+      🕓 Текущий статус: <strong>{status}</strong>
+    </p>
+  );
 }
