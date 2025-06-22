@@ -4,6 +4,7 @@ import styles from "./UploadForm.module.css";
 
 export default function UploadForm({ onStart }) {
   const [file, setFile] = useState(null);
+  const [format, setFormat] = useState("jpg");
   const [preview, setPreview] = useState("");
   const [error, setError] = useState("");
 
@@ -24,9 +25,10 @@ export default function UploadForm({ onStart }) {
     if (!file) return setError("Файл не выбран.");
     const formData = new FormData();
     formData.append("image", file);
+    formData.append("format", format);
     try {
       const res = await uploadImage(formData);
-      onStart(res.taskId); // 👈 У тебя должно быть просто res.taskId
+      onStart(res.taskId);
     } catch {
       setError("Ошибка при загрузке изображения.");
     }
@@ -36,6 +38,10 @@ export default function UploadForm({ onStart }) {
     <div className={styles.container}>
       <h3>📤 Загрузка изображения</h3>
       <input type="file" accept="image/*" onChange={handleChange} />
+      <select value={format} onChange={(e) => setFormat(e.target.value)}>
+        <option value="jpg">JPG</option>
+        <option value="pdf">PDF</option>
+      </select>
       {preview && (
         <img src={preview} className={styles.preview} alt="предпросмотр" />
       )}

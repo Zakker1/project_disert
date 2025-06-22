@@ -1,4 +1,3 @@
-// Отправка изображения на backend
 export async function uploadImage(formData) {
   const response = await fetch("http://localhost:3000/api/tasks/upload", {
     method: "POST",
@@ -9,10 +8,9 @@ export async function uploadImage(formData) {
     throw new Error("Ошибка при отправке изображения");
   }
 
-  return await response.json(); // ожидается: { taskId: '...' }
+  return await response.json();
 }
 
-// Получение статуса задачи
 export async function getTaskStatus(taskId) {
   const response = await fetch(
     `http://localhost:3000/api/tasks/status/${taskId}`
@@ -22,5 +20,5 @@ export async function getTaskStatus(taskId) {
     throw new Error("Ошибка при получении статуса задачи");
   }
 
-  return await response.json(); // ожидается: { status: 'pending' | 'done' | 'error', ... }
+  return await response.json();
 }
